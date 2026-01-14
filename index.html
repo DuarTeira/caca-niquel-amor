@@ -1,212 +1,170 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
-<title>🎰 Caça-Níquel do Amor</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça-Níquel do Amor 💖</title>
 
 <style>
-body{
-  margin:0;
+body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#ff758c,#ff7eb3);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-  transition:1s;
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-body.romantico{
-  background: linear-gradient(135deg,#ff0844,#ffb199);
+
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-.container{
-  background:#fff;
-  padding:20px;
-  border-radius:20px;
-  width:95%;
-  max-width:380px;
-  text-align:center;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+
+h1 {
+  margin-bottom: 15px;
+  color: #ff4f70;
 }
-.slots{
-  display:flex;
-  justify-content:space-between;
-  margin:25px 0;
+
+.slots {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  font-size: 22px;
 }
-.slot{
-  width:48%;
-  height:90px;
-  border:3px solid #ff4f70;
-  border-radius:18px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:20px;
-  font-weight:bold;
-  background:#fff0f5;
-  padding:8px;
-  text-align:center;
+
+.slot {
+  width: 130px;
+  height: 50px;
+  background: #ffe3ea;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
-.slot.premio{
-  animation:pulse 0.6s infinite alternate;
-  box-shadow:0 0 25px #ff4f70;
+
+button {
+  background: #ff4f70;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
 }
-@keyframes pulse{
-  from{transform:scale(1)}
-  to{transform:scale(1.1)}
+
+button:disabled {
+  opacity: 0.6;
 }
-button{
-  width:100%;
-  padding:14px;
-  font-size:17px;
-  border:none;
-  border-radius:14px;
-  background:#ff4f70;
-  color:#fff;
-  cursor:pointer;
-  margin-top:8px;
-}
-button:disabled{opacity:0.6}
-#resultado{
-  margin-top:16px;
-  font-size:18px;
-  font-weight:bold;
-}
-#especial{
-  margin-top:10px;
-  font-size:16px;
-  color:#c2185b;
-}
-#secreta{
-  margin-top:10px;
-  font-size:17px;
-  color:#880e4f;
-  display:none;
+
+#message {
+  margin-top: 15px;
+  font-weight: bold;
+  min-height: 24px;
+  color: #ff4f70;
 }
 </style>
 </head>
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
 
 <body>
 
 <div class="container">
   <h1>🎰 Caça-Níquel do Amor</h1>
-  <p>Deixe a sorte decidir ❤️</p>
 
   <div class="slots">
-    <div class="slot" id="slotComida">🍽️</div>
-    <div class="slot" id="slotBebida">🥤</div>
+    <div class="slot" id="slot1">💖</div>
+    <div class="slot" id="slot2">💖</div>
   </div>
 
-  <button id="btnMusica">🎶 Ligar música</button>
-  <button id="btnGirar">GIRAR 🎰</button>
+  <button id="spinBtn">GIRAR 💘</button>
 
-  <div id="resultado"></div>
-  <div id="especial"></div>
-  <div id="secreta"></div>
+  <div id="message"></div>
 </div>
 
-<!-- Sons -->
-<audio id="somGiro" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_89a4db90c0.mp3"></audio>
-<audio id="somWin" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_5c5d0c2c15.mp3"></audio>
-<audio id="musica" src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_7b7e2e9a74.mp3" loop></audio>
+<!-- SONS -->
+<audio id="spinSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7e07b1b6f6.mp3?filename=casino-spin-112197.mp3"></audio>
+<audio id="winSound" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_88e9d9b7d1.mp3?filename=slot-machine-win-110473.mp3"></audio>
+<audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2022/08/09/audio_84b0c07a19.mp3?filename=casino-jazz-11285.mp3" loop></audio>
 
 <script>
-const comidas=[
- {n:"🍝 Lasanha",p:5},
- {n:"🍿 Pipoca",p:5},
- {n:"🍛 Strogonoff",p:5},
- {n:"🍔 Hambúrguer",p:5},
- {n:"🍮 Pudim",p:4},
- {n:"🍿 Pipoca doce",p:4},
- {n:"🍕 Pizza",p:5},
- {n:"🍢🍱Tira Gosto",p:1}
+const items = [
+  "🍝 Lasanha",
+  "🍿 Pipoca",
+  "🍛 Strogonoff",
+  "🍔 Hambúrguer",
+  "🍮 Pudim",
+  "🍬 Pipoca Doce",
+  "🍕 Pizza",
+  "🧉 Tereré",
+  "🍷 Vinho",
+  "🥤 Suco",
+  "🥤 Coca-Cola",
+  "🥤 Fanta",
+  "💧 Água",
+  "🍺 Cerveja"
 ];
 
-const bebidas=[
- "🍷 Vinho","🧃 Suco natural","🥤 Coca-Cola",
- "🍊 Fanta","💧 Água","🍺 Cerveja Stempell"
-];
+const slot1 = document.getElementById("slot1");
+const slot2 = document.getElementById("slot2");
+const btn = document.getElementById("spinBtn");
+const message = document.getElementById("message");
 
-const slotC=document.getElementById("slotComida");
-const slotB=document.getElementById("slotBebida");
-const res=document.getElementById("resultado");
-const esp=document.getElementById("especial");
-const sec=document.getElementById("secreta");
-const btnG=document.getElementById("btnGirar");
-const btnM=document.getElementById("btnMusica");
-const somG=document.getElementById("somGiro");
-const somW=document.getElementById("somWin");
-const musica=document.getElementById("musica");
+const spinSound = document.getElementById("spinSound");
+const winSound = document.getElementById("winSound");
+const bgMusic = document.getElementById("bgMusic");
 
-btnM.onclick=()=>{
- musica.volume=0.25;
- musica.play();
- btnM.style.display="none";
-};
+let started = false;
 
-function sortear(){
- let total=comidas.reduce((s,i)=>s+i.p,0);
- let r=Math.random()*total;
- for(let i of comidas){
-  if(r<i.p) return i.n;
-  r-=i.p;
- }
-}
-
-btnG.onclick=()=>{
- btnG.disabled=true;
- res.innerText="";
- esp.innerText="";
- sec.style.display="none";
- document.body.classList.remove("romantico");
- slotC.classList.remove("premio");
- slotB.classList.remove("premio");
-
- let v=40,g=0,max=32;
- somG.currentTime=0;
- somG.play();
-
- function animar(){
-  slotC.innerText=sortear();
-  slotB.innerText=bebidas[Math.floor(Math.random()*bebidas.length)];
-  g++; v+=14;
-  if(g<max){
-   setTimeout(animar,v);
-  }else{
-   somG.pause();
-   somW.play();
-   btnG.disabled=false;
-
-   const c=slotC.innerText;
-   const b=slotB.innerText;
-
-   res.innerText=`❤️ Próximo domingo vamos fazer ${c} com ${b}!`;
-
-   if((c.includes("Pizza")||c.includes("Hambúrguer")) && b.includes("Vinho")){
-    document.body.classList.add("romantico");
-    slotC.classList.add("premio");
-    slotB.classList.add("premio");
-    esp.innerText="💖 Noite romântica confirmada!";
-    sec.style.display="block";
-    sec.innerText="😏 Depois do jantar… a sobremesa é por nossa conta 🔥";
-   }else if(c.includes("Tira")){
-    esp.innerText="Parece que vai sair algo bom nesse domingo!😏";
-   }else{
-    esp.innerText="✨ Vai ser delicioso!";
-   }
+btn.onclick = () => {
+  if (!started) {
+    bgMusic.volume = 0.3;
+    bgMusic.play();
+    started = true;
   }
- }
- animar();
+
+  btn.disabled = true;
+  message.textContent = "";
+
+  spinSound.currentTime = 0;
+  spinSound.play();
+
+  let spins = 20;
+  let interval = 80;
+
+  const spinInterval = setInterval(() => {
+    slot1.textContent = items[Math.floor(Math.random() * items.length)];
+    slot2.textContent = items[Math.floor(Math.random() * items.length)];
+
+    spins--;
+    interval += 15;
+
+    if (spins <= 0) {
+      clearInterval(spinInterval);
+
+      const final1 = items[Math.floor(Math.random() * items.length)];
+      const final2 = items[Math.floor(Math.random() * items.length)];
+
+      slot1.textContent = final1;
+      slot2.textContent = final2;
+
+      winSound.play();
+
+      if (final1 === final2) {
+        message.textContent = "💖 COMBINAÇÃO PERFEITA! Escolha do amor 💖";
+      } else {
+        message.textContent = "✨ Que tal essa combinação deliciosa? ✨";
+      }
+
+      btn.disabled = false;
+    }
+  }, interval);
 };
 </script>
 
 </body>
 </html>
-
