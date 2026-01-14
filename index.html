@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caça-Níquel do Amor 💖</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  width: 320px;
+}
+
+.slots {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  font-size: 22px;
+}
+
+.slot {
+  width: 140px;
+  height: 50px;
+  background: #ffe3ea;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+button {
+  background: #ff4f70;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#message {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #ff4f70;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🎰 Caça-Níquel do Amor</h2>
+
+  <div class="slots">
+    <div class="slot" id="slot1">💖</div>
+    <div class="slot" id="slot2">💖</div>
+  </div>
+
+  <button id="spinBtn">GIRAR 💘</button>
+
+  <div id="message"></div>
+</div>
+
+<script>
+const items = [
+  "🍝 Lasanha",
+  "🍿 Pipoca",
+  "🍛 Strogonoff",
+  "🍔 Hambúrguer",
+  "😋 Tira Gosto",
+  "🍮 Pudim",	
+  "🍬 Pipoca Doce",
+  "🍕 Pizza",
+  "🧉 Tereré",
+  "🍷 Vinho",
+  "🥤 Suco",
+  "🥤 Coca-Cola",
+  "🍺 Cerveja"
+];
+
+const slot1 = document.getElementById("slot1");
+const slot2 = document.getElementById("slot2");
+const btn = document.getElementById("spinBtn");
+const msg = document.getElementById("message");
+
+const spinSound = new Audio("spin.mp3");
+const winSound = new Audio("win.mp3");
+const music = new Audio("music.mp3");
+music.loop = true;
+music.volume = 0.3;
+
+let musicStarted = false;
+
+btn.addEventListener("click", () => {
+  if (!musicStarted) {
+    music.play();
+    musicStarted = true;
+  }
+
+  btn.disabled = true;
+  msg.textContent = "";
+
+  spinSound.currentTime = 0;
+  spinSound.play();
+
+  let spins = 25;
+  let speed = 60;
+
+  const interval = setInterval(() => {
+    slot1.textContent = items[Math.floor(Math.random() * items.length)];
+    slot2.textContent = items[Math.floor(Math.random() * items.length)];
+
+    spins--;
+    speed += 20;
+
+    if (spins <= 0) {
+      clearInterval(interval);
+
+      const a = items[Math.floor(Math.random() * items.length)];
+      const b = items[Math.floor(Math.random() * items.length)];
+
+      slot1.textContent = a;
+      slot2.textContent = b;
+
+      winSound.play();
+
+      msg.textContent = a === b
+        ? "💖 COMBINAÇÃO PERFEITA! 💖"
+        : "✨ Combinação deliciosa pra vocês ✨";
+
+      btn.disabled = false;
+    }
+  }, speed);
+});
+</script>
+
+</body>
+</html>
